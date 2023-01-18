@@ -1,4 +1,4 @@
-import React, { Components } from 'react';
+import React from 'react';
 import { Task } from "./Task"
 const Tasks = ({ tasks, onDelete, onToggle }) => {
   return (

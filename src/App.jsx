@@ -1,7 +1,10 @@
-import React, { Components } from 'react';
+import React from 'react';
 import { useEffect, useState } from "react"
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Header from './components/Header'
 import Tasks from './components/Tasks'
+import About from './components/About'  
+import Footer from './components/Footer'
 import AddTask from './components/AddTask'
 
 const App = () => {
@@ -47,10 +50,13 @@ const App = () => {
 
   const data = await res.json()
 
+  // Set Tasks
   setTasks([...tasks, data])
     // const id = Math.floor(Math.random() * 10000) + 1
     // const newTask = {id, ...task}
     // setTasks([...tasks, newTask]
+    
+    tasks.map((task) => task.id ? { ...task, reminder: data.reminder } : task)
   }
 
   // Delete Task
@@ -70,6 +76,7 @@ const App = () => {
       },
       body: JSON.stringify(updTask)
     })
+    // eslint-disable-next-line
     const data = await res.json()
 
     setTasks(tasks.map((task) => task.id === id ? 
@@ -79,13 +86,20 @@ const App = () => {
 
   // Return - APP PAGE
   return (
-    <div className="container">
-      <Header onAdd={() => setShowAddTask(!showAddTask)} showAdd={showAddTask} />
-      {showAddTask && <AddTask onAdd={addTask} />}
-      {tasks.length > 0 ? <Tasks tasks={tasks} 
-        onDelete={deleteTask} 
-        onToggle={toggleReminder} /> : 'nothing to see here'}
-    </div>
+    <Router>
+      <div className="container">
+        <Header onAdd={() => setShowAddTask(!showAddTask)} showAdd={showAddTask} />
+        {showAddTask && <AddTask onAdd={addTask} />}
+        <Routes>
+          <Route path='/' exact element={tasks.length > 0 ? 
+          <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder} /> : 
+          'nothing to see here'
+          } />
+          <Route path='/about' element={<About />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
